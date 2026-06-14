@@ -4,647 +4,191 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>SkinCat - Deteksi Penyakit Kulit Kucing via Gejala</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: system-ui, 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-        }
-
-        body {
-            background: #f9f5ff;
-            color: #2d2a3a;
-            line-height: 1.5;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        /* header & navbar — nuansa ungu */
-        .header {
-            background: rgba(245, 240, 255, 0.92);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid #e2d6ff;
-            position: sticky;
-            top: 0;
-            z-index: 20;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.02);
-        }
-
-        .nav-container {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 0.75rem 2rem;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-        }
-
-        .logo {
-            font-size: 1.7rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #8b5cf6, #c084fc);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            letter-spacing: -0.3px;
-        }
-
-        .logo small {
-            font-size: 0.85rem;
-            font-weight: 400;
-            color: #a78bfa;
-            background: none;
-            -webkit-background-clip: unset;
-            background-clip: unset;
-        }
-
-        .nav-links {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.4rem;
-        }
-
-        .nav-btn {
-            background: transparent;
-            border: none;
-            padding: 0.5rem 1rem;
-            font-size: 0.9rem;
-            font-weight: 500;
-            border-radius: 60px;
-            cursor: pointer;
-            transition: all 0.2s;
-            color: #5b4b8c;
-        }
-
-        .nav-btn:hover {
-            background: #ede9fe;
-            color: #6d28d9;
-        }
-
-        .nav-btn.active {
-            background: #8b5cf6;
-            color: white;
-            box-shadow: 0 4px 8px rgba(139, 92, 246, 0.3);
-        }
-
-        /* main */
-        .container {
-            max-width: 1280px;
-            margin: 2rem auto;
-            padding: 0 2rem 3rem;
-            flex: 1;
-        }
-
-        .page {
-            display: none;
-            animation: fadeIn 0.25s ease;
-        }
-
-        .active-page {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(6px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* cards */
-        .card {
-            background: white;
-            border-radius: 32px;
-            padding: 1.8rem;
-            box-shadow: 0 10px 25px -8px rgba(0, 0, 0, 0.05);
-            border: 1px solid #f0eaff;
-            margin-bottom: 2rem;
-            transition: 0.2s;
-        }
-
-        .hero {
-            background: linear-gradient(115deg, #f5f0ff, #fefbff);
-            border-radius: 40px;
-            padding: 2.5rem;
-            margin-bottom: 2rem;
-            border: 1px solid #e9dfff;
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: space-between;
-            gap: 2rem;
-        }
-
-        .hero-content {
-            flex: 1.5;
-            min-width: 300px;
-        }
-
-        .hero-image {
-            flex: 1;
-            text-align: center;
-            min-width: 240px;
-        }
-
-        .hero-image img {
-            max-width: 100%;
-            border-radius: 32px;
-            box-shadow: 0 12px 28px -12px rgba(139, 92, 246, 0.3);
-            width: 260px;
-            height: auto;
-            object-fit: cover;
-            transition: 0.3s;
-            border: 4px solid white;
-        }
-
-        h1 {
-            font-size: 2.4rem;
-            font-weight: 800;
-            color: #7c3aed;
-        }
-
-        h2 {
-            font-size: 1.6rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: #4c3d6e;
-            border-left: 5px solid #a78bfa;
-            padding-left: 1rem;
-        }
-
-        h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin: 1rem 0 0.5rem 0;
-            color: #8b5cf6;
-        }
-
-        .btn-primary {
-            background: #8b5cf6;
-            border: none;
-            color: white;
-            font-weight: 600;
-            padding: 0.75rem 2rem;
-            border-radius: 60px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: 0.2s;
-            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.2);
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 1rem;
-        }
-
-        .btn-primary:hover {
-            background: #7c3aed;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(139, 92, 246, 0.3);
-        }
-
-        .btn-secondary {
-            background: #ede9fe;
-            border: none;
-            padding: 0.6rem 1.5rem;
-            border-radius: 40px;
-            font-weight: 500;
-            cursor: pointer;
-            color: #5b4b8c;
-            transition: 0.2s;
-        }
-
-        .btn-secondary:hover {
-            background: #ddd6fe;
-        }
-
-        /* gejala grid */
-        .gejala-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 0.9rem;
-            margin: 1.8rem 0;
-        }
-
-        .gejala-item {
-            background: #fefbff;
-            border-radius: 60px;
-            padding: 0.5rem 1rem 0.5rem 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 0.7rem;
-            border: 1px solid #ede9fe;
-            transition: 0.1s;
-        }
-
-        .gejala-item input {
-            width: 1.2rem;
-            height: 1.2rem;
-            accent-color: #8b5cf6;
-            cursor: pointer;
-            flex-shrink: 0;
-        }
-
-        .gejala-item label {
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: #3d3652;
-            cursor: pointer;
-            flex: 1;
-        }
-
-        .result-box {
-            background: #f3efff;
-            border-radius: 28px;
-            padding: 1.6rem;
-            margin-top: 1.8rem;
-            border-left: 8px solid #a78bfa;
-        }
-
-        .penyakit-list-home {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1.5rem;
-            margin: 1.5rem 0;
-        }
-
-        .penyakit-card {
-            background: white;
-            border-radius: 24px;
-            padding: 1.2rem;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.03);
-            border: 1px solid #ede9fe;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .penyakit-card-img {
-            width: 100%;
-            height: 150px;
-            border-radius: 16px;
-            object-fit: cover;
-            margin-bottom: 0.8rem;
-            background: #f1ebff;
-            border: 1px solid #f0eaff;
-        }
-
-        .penyakit-card strong {
-            font-size: 1.2rem;
-            color: #8b5cf6;
-            display: block;
-            margin-bottom: 6px;
-        }
-
-        /* style untuk info penyakit dengan foto seragam */
-        .penyakit-detail {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1.5rem;
-            align-items: flex-start;
-            background: #fefbff;
-            border-radius: 28px;
-            padding: 1.2rem;
-            margin-bottom: 1.8rem;
-            border: 1px solid #ede9fe;
-            transition: all 0.2s;
-        }
-        .penyakit-detail:hover {
-            background: #ffffff;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.02);
-        }
-        .penyakit-foto {
-            flex-shrink: 0;
-            width: 140px;
-            height: 140px;
-            border-radius: 24px;
-            overflow: hidden;
-            background: #f1ebff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-        }
-        .penyakit-foto img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover; 
-            display: block;
-            transition: transform 0.2s;
-        }
-        .penyakit-foto img:hover {
-            transform: scale(1.02);
-        }
-        .penyakit-deskripsi {
-            flex: 1;
-            min-width: 200px;
-        }
-        .penyakit-deskripsi h3 {
-            margin-top: 0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* Footer Kustom - Diubah dari CECI ke SkinCat */
-        .skincat-footer {
-            background-color: #0d4b4d; 
-            color: #ffffff;
-            padding: 2.5rem 2rem 1.5rem 2rem;
-            font-family: system-ui, -apple-system, sans-serif;
-            margin-top: auto;
-        }
-
-        .skincat-footer-container {
-            max-width: 1280px;
-            margin: 0 auto;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            gap: 2rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 2rem;
-        }
-
-        .skincat-footer-brand {
-            flex: 2;
-            min-width: 280px;
-        }
-
-        .skincat-footer-logo {
-            font-size: 1.5rem;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 1rem;
-            letter-spacing: 0.5px;
-        }
-
-        .skincat-footer-brand p {
-            font-size: 0.95rem;
-            opacity: 0.85;
-            color: #e0f2f1;
-        }
-
-        .skincat-footer-links-group {
-            display: flex;
-            gap: 4rem;
-            flex-wrap: wrap;
-        }
-
-        .skincat-footer-column {
-            min-width: 160px;
-        }
-
-        .skincat-footer-column h4 {
-            font-size: 1rem;
-            font-weight: 800;
-            margin-bottom: 1.2rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #ffffff;
-        }
-
-        .skincat-footer-column ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .skincat-footer-column ul li {
-            margin-bottom: 0.8rem;
-        }
-
-        .skincat-footer-column ul li a {
-            color: #b2dfdb;
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: color 0.2s;
-            cursor: pointer;
-        }
-
-        .skincat-footer-column ul li a:hover {
-            color: #ffffff;
-        }
-
-        .skincat-footer-bottom {
-            max-width: 1280px;
-            margin: 1.2rem auto 0 auto;
-            font-size: 0.8rem;
-            color: #80cbc4;
-            opacity: 0.9;
-        }
-
-        @media (max-width: 700px) {
-            .nav-container {
-                flex-direction: column;
-                align-items: stretch;
-                text-align: center;
-            }
-            .nav-links {
-                justify-content: center;
-            }
-            .container {
-                padding: 1rem;
-            }
-            .gejala-grid {
-                grid-template-columns: 1fr;
-            }
-            h1 {
-                font-size: 1.8rem;
-            }
-            .hero {
-                flex-direction: column;
-                text-align: center;
-                padding: 1.5rem;
-            }
-            .hero-image img {
-                width: 200px;
-            }
-            .skincat-footer-links-group {
-                gap: 2rem;
-            }
-        }
-
-        .info-badge {
-            background: #ede9fe;
-            border-radius: 50px;
-            padding: 0.25rem 1rem;
-            font-size: 0.75rem;
-            display: inline-block;
-        }
-
-        .flex-between {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        
-        .penyakit-foto img.error-img {
-            object-fit: contain;
-            padding: 0.5rem;
-            background: #f0eaff;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <header class="header">
     <div class="nav-container">
-        <div class="logo">SkinCat <small>— deteksi berbasis gejala</small></div>
+        <div class="logo">🐱 SkinCat <small>— Deteksi Berbasis Gejala</small></div>
         <div class="nav-links">
-            <button class="nav-btn active" data-nav="home">🏠 Beranda</button>
-            <button class="nav-btn" data-nav="deteksi">🔍 Deteksi Gejala</button>
-            <button class="nav-btn" data-nav="info">📖 Info Penyakit</button> 
-            <button class="nav-btn" data-nav="tips">💡 Tips Perawatan</button>
-            <button class="nav-btn" data-nav="tentang">ℹ️ Tentang</button>
+            <button class="nav-btn active" data-nav="home">Beranda</button>
+            <button class="nav-btn" data-nav="deteksi">Deteksi Gejala</button>
+            <button class="nav-btn" data-nav="info">Info Penyakit</button> 
+            <button class="nav-btn" data-nav="tips">Tips Perawatan</button>
+            <button class="nav-btn" data-nav="tentang">Tentang</button>
         </div>
     </div>
 </header>
 
 <main class="container">
     <div id="home-page" class="page active-page">
-        <div class="hero">
-            <div class="hero-content">
-                <h1>🐾 SkinCat</h1>
-                <p style="font-size: 1.2rem; margin: 0.5rem 0 0;">Deteksi penyakit kulit kucing <strong>dengan memilih ciri-ciri & gejala</strong>.</p>
-                <p style="margin-top: 0.6rem;">Pilih gejala yang terlihat pada kulit kucing Anda → sistem akan menganalisis kemungkinan penyakit (Flea Allergy, Ringworm, Scabies, Feline Acne).</p>
-                <button class="btn-primary" id="home-deteksi-btn">✨ Mulai Deteksi Gejala</button>
+        <div class="page-content">
+            <div class="hero">
+                <div class="hero-content">
+                    <h1>SkinCat</h1>
+                    <p style="font-size: 1.25rem; color: #4c3d6e; margin: 0.5rem 0 0;">Deteksi penyakit kulit kucing <strong>dengan memilih ciri-ciri & gejala</strong>.</p>
+                    <p style="margin-top: 0.8rem; color: #655880;">Pilih gejala yang terlihat pada kulit kucing Anda → sistem akan menganalisis kemungkinan penyakit (Flea Allergy, Ringworm, Scabies, Feline Acne).</p>
+                    <button class="btn-primary" id="home-deteksi-btn">Mulai Deteksi Gejala</button>
+                </div>
+                <div class="hero-image">
+                    <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=600&auto=format&fit=crop" alt="Kucing Sehat dan Ceria">
+                </div>
             </div>
-            <div class="hero-image">
-                <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=600&auto=format&fit=crop" alt="Kucing Sehat dan Ceria">
-            </div>
-        </div>
 
-        <div class="card">
-            <h2>📋 4 Penyakit Kulit Utama pada Kucing</h2>
-            <div class="penyakit-list-home">
-                <div class="penyakit-card">
-                    <img src="image1.jpg.jpg" alt="Ilustrasi Flea Allergic Dermatitis" class="penyakit-card-img">
-                    <strong>🐜 Flea Allergic Dermatitis</strong>
-                    Alergi kutu → gatal hebat, rambut rontok pangkal ekor, kemerahan, ada kotoran kutu.
-                </div>
-                <div class="penyakit-card">
-                    <img src="image2.jpg.jpg" alt="Ilustrasi Ringworm" class="penyakit-card-img">
-                    <strong>🍄 Ringworm (Kurap)</strong>
-                    Infeksi jamur → lesi melingkar, rambut rontok berbentuk cincin, kulit bersisik.
-                </div>
-                <div class="penyakit-card">
-                    <img src="image3.jpg.jpg" alt="Ilustrasi Scabies" class="penyakit-card-img">
-                    <strong>🕷️ Scabies (Kudis)</strong>
-                    Tungau → gatal ekstrem, keropeng tebal di telinga/wajah, penebalan kulit.
-                </div>
-                <div class="penyakit-card">
-                    <img src="image4.jpg.jpg" alt="Ilustrasi Feline Acne" class="penyakit-card-img">
-                    <strong>⚫ Feline Acne</strong>
-                    Komedo hitam di dagu, bengkak, pustula, kemerahan lokal.
+            <div class="card">
+                <h2>4 Penyakit Kulit Utama pada Kucing</h2>
+                <div class="penyakit-list-home">
+                    <div class="penyakit-card">
+                        <img src="image1.jpg.jpg" alt="Ilustrasi Flea Allergic Dermatitis" class="penyakit-card-img">
+                        <strong>Flea Allergic Dermatitis</strong>
+                        Alergi kutu → gatal hebat, rambut rontok pangkal ekor, kemerahan, ada kotoran kutu.
+                    </div>
+                    <div class="penyakit-card">
+                        <img src="image2.jpg.jpg" alt="Ilustrasi Ringworm" class="penyakit-card-img">
+                        <strong>Ringworm (Kurap)</strong>
+                        Infeksi jamur → lesi melingkar, rambut rontok berbentuk cincin, kulit bersisik.
+                    </div>
+                    <div class="penyakit-card">
+                        <img src="image3.jpg.jpg" alt="Ilustrasi Scabies" class="penyakit-card-img">
+                        <strong>Scabies (Kudis)</strong>
+                        Tungau → gatal ekstrem, keropeng tebal di telinga/wajah, penebalan kulit.
+                    </div>
+                    <div class="penyakit-card">
+                        <img src="image4.jpg.jpg" alt="Ilustrasi Feline Acne" class="penyakit-card-img">
+                        <strong>Feline Acne</strong>
+                        Komedo hitam di dagu, bengkak, pustula, kemerahan lokal.
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <div class="card">
-            <h2>📋 Cara Penggunaan (Pemilihan Ciri-Ciri)</h2>
-            <ol style="margin-left: 1.5rem; line-height: 1.7;">
-                <li>Amati kulit kucing Anda dengan pencahayaan cukup.</li>
-                <li>Buka menu <strong>Deteksi Gejala</strong> dan centang semua ciri-ciri yang sesuai.</li>
-                <li>Klik tombol "Deteksi Sekarang" → sistem akan mencocokkan dengan 4 penyakit.</li>
-                <li>Baca hasil kemungkinan penyakit dan saran perawatan awal.</li>
-                <li>Konsultasikan hasilnya ke dokter hewan untuk penanganan lebih lanjut.</li>
-            </ol>
-            <div class="info-badge" style="margin-top: 1rem;">✅ Pastikan mengamati gejala dengan teliti (fokus pada kulit, rambut, perilaku gatal).</div>
+            <div class="card">
+                <h2>Cara Penggunaan (Pemilihan Ciri-Ciri)</h2>
+                <ol style="margin-left: 1.5rem; line-height: 1.8; color: #4c445c;">
+                    <li>Amati kulit kucing Anda dengan pencahayaan cukup.</li>
+                    <li>Buka menu <strong>Deteksi Gejala</strong> dan centang semua ciri-ciri yang sesuai.</li>
+                    <li>Klik tombol "Deteksi Sekarang" → sistem akan mencocokkan dengan 4 penyakit.</li>
+                    <li>Baca hasil kemungkinan penyakit dan saran perawatan awal.</li>
+                    <li>Konsultasikan hasilnya ke dokter hewan untuk penanganan lebih lanjut.</li>
+                </ol>
+                <div class="info-badge" style="margin-top: 1.2rem;">Pastikan mengamati gejala dengan teliti (fokus pada kulit, rambut, perilaku gatal).</div>
+            </div>
         </div>
     </div>
 
     <div id="deteksi-page" class="page">
-        <div class="card">
-            <h2>🔬 Deteksi Penyakit Kulit Kucing</h2>
-            <p>Pilih <strong>ciri-ciri & gejala</strong> yang tampak pada kulit kucing Anda (centang semua yang relevan):</p>
-            <div class="gejala-grid" id="gejala-container"></div>
-            <div class="flex-between">
-                <button id="deteksi-btn" class="btn-primary">🐱 Deteksi Sekarang</button>
-                <button id="reset-gejala-btn" class="btn-secondary">🔄 Reset Pilihan</button>
+        <div class="page-content">
+            <div class="card">
+                <h2>Deteksi Penyakit Kulit Kucing</h2>
+                <p style="color: #4f46e5;">Pilih <strong>ciri-ciri & gejala</strong> yang tampak pada kulit kucing Anda (centang semua yang relevan):</p>
+                <div class="gejala-grid" id="gejala-container"></div>
+                <div class="flex-between">
+                    <button id="deteksi-btn" class="btn-primary">Deteksi Sekarang</button>
+                    <button id="reset-gejala-btn" class="btn-secondary">Reset Pilihan</button>
+                </div>
+                <div id="hasil-deteksi" class="result-box" style="display: none;"></div>
             </div>
-            <div id="hasil-deteksi" class="result-box" style="display: none;"></div>
         </div>
     </div>
 
     <div id="info-page" class="page">
-        <div class="card">
-            <h2>📚 Informasi Lengkap 4 Penyakit Kulit Kucing</h2>
-            
-            <div class="penyakit-detail">
-                <div class="penyakit-foto">
-                    <img src="image1.jpg.jpg" alt="Ilustrasi Gejala Flea Allergic Dermatitis">
+        <div class="page-content">
+            <div class="card">
+                <h2>Informasi Lengkap 4 Penyakit Kulit Kucing</h2>
+                
+                <div class="penyakit-detail">
+                    <div class="penyakit-foto">
+                        <img src="image1.jpg.jpg" alt="Ilustrasi Gejala Flea Allergic Dermatitis">
+                    </div>
+                    <div class="penyakit-deskripsi">
+                        <h3>Flea Allergic Dermatitis (FAD)</h3>
+                        <p style="color: #6b21a8;">Reaksi alergi terhadap air liur kutu. <strong>Gejala khas:</strong> gatal intens, kemerahan, rambut rontok di pangkal ekor & punggung, adanya kutu/kotoran kutu, kulit bersisik, luka garuk. <strong>Penanganan:</strong> kontrol kutu menyeluruh (spot-on/semprot), obat antiinflamasi dari dokter, bersihkan lingkungan.</p>
+                    </div>
                 </div>
-                <div class="penyakit-deskripsi">
-                    <h3>🐜 Flea Allergic Dermatitis (FAD)</h3>
-                    <p>Reaksi alergi terhadap air liur kutu. <strong>Gejala khas:</strong> gatal intens, kemerahan, rambut rontok di pangkal ekor & punggung, adanya kutu/kotoran kutu, kulit bersisik, luka garuk. <strong>Penanganan:</strong> kontrol kutu menyeluruh (spot-on/semprot), obat antiinflamasi dari dokter, bersihkan lingkungan.</p>
+                
+                <div class="penyakit-detail">
+                    <div class="penyakit-foto">
+                        <img src="image2.jpg.jpg" alt="Ilustrasi Gejala Ringworm Kulit Kucing">
+                    </div>
+                    <div class="penyakit-deskripsi">
+                        <h3>Ringworm (Dermatofitosis)</h3>
+                        <p style="color: #6b21a8;">Infeksi jamur menular ke manusia/hewan lain. <strong>Ciri utama:</strong> lesi melingkar seperti cincin, rambut rontok melingkar, kulit bersisik & berkerak, gatal ringan hingga sedang. <strong>Penanganan:</strong> antijamur topikal & oral, isolasi, disinfeksi lingkungan, jaga kebersihan.</p>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="penyakit-detail">
-                <div class="penyakit-foto">
-                    <img src="image2.jpg.jpg" alt="Ilustrasi Gejala Ringworm Kulit Kucing">
+                
+                <div class="penyakit-detail">
+                    <div class="penyakit-foto">
+                        <img src="image3.jpg.jpg" alt="Ilustrasi Gejala Scabies Kucing">
+                    </div>
+                    <div class="penyakit-deskripsi">
+                        <h3>Scabies (Kudis)</h3>
+                        <p style="color: #6b21a8;">Infestasi tungau (Notoedres cati). <strong>Gejala berat:</strong> gatal ekstrem (kucing gelisah), keropeng tebal di telinga, wajah, siku, perut, penebalan kulit, rambut rontok. <strong>Penanganan:</strong> obat antiparasit (ivermectin/selamektin), mandi obat, semua hewan kontak diobati.</p>
+                    </div>
                 </div>
-                <div class="penyakit-deskripsi">
-                    <h3>🍄 Ringworm (Dermatofitosis)</h3>
-                    <p>Infeksi jamur menular ke manusia/hewan lain. <strong>Ciri utama:</strong> lesi melingkar seperti cincin, rambut rontok melingkar, kulit bersisik & berkerak, gatal ringan hingga sedang. <strong>Penanganan:</strong> antijamur topikal & oral, isolasi, disinfeksi lingkungan, jaga kebersihan.</p>
-                </div>
-            </div>
-            
-            <div class="penyakit-detail">
-                <div class="penyakit-foto">
-                    <img src="image3.jpg.jpg" alt="Ilustrasi Gejala Scabies Kucing">
-                </div>
-                <div class="penyakit-deskripsi">
-                    <h3>🕷️ Scabies (Kudis)</h3>
-                    <p>Infestasi tungau (Notoedres cati). <strong>Gejala berat:</strong> gatal ekstrem (kucing gelisah), keropeng tebal di telinga, wajah, siku, perut, penebalan kulit, rambut rontok. <strong>Penanganan:</strong> obat antiparasit (ivermectin/selamektin), mandi obat, semua hewan kontak diobati.</p>
-                </div>
-            </div>
-            
-            <div class="penyakit-detail">
-                <div class="penyakit-foto">
-                    <img src="image4.jpg.jpg" alt="Ilustrasi Gejala Feline Acne">
-                </div>
-                <div class="penyakit-deskripsi">
-                    <h3>⚫ Feline Acne</h3>
-                    <p>Gangguan folikel rambut di dagu/bibir. <strong>Tanda:</strong> komedo hitam (blackheads), pembengkakan, pustula, kemerahan, kadang gatal. <strong>Penanganan:</strong> pembersihan antiseptik (chlorhexidine), salep antibiotik jika infeksi, ganti mangkuk plastik dengan stainless/keramik.</p>
+                
+                <div class="penyakit-detail">
+                    <div class="penyakit-foto">
+                        <img src="image4.jpg.jpg" alt="Ilustrasi Gejala Feline Acne">
+                    </div>
+                    <div class="penyakit-deskripsi">
+                        <h3>Feline Acne</h3>
+                        <p style="color: #6b21a8;">Gangguan folikel rambut di dagu/bibir. <strong>Tanda:</strong> komedo hitam (blackheads), pembengkakan, pustula, kemerahan, kadang gatal. <strong>Penanganan:</strong> pembersihan antiseptik (chlorhexidine), salep antibiotik jika infeksi, ganti mangkuk plastik dengan stainless/keramik.</p>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <div id="tips-page" class="page">
-        <div class="card">
-            <h2>🧴 Tips Perawatan Kulit Kucing Sehat</h2>
-            <ul style="margin-left: 1.5rem; line-height: 1.7;">
-                <li>✨ Periksa kulit & bulu secara rutin (setiap 1-2 minggu).</li>
-                <li>✨ Gunakan produk anti-kutu & caplak sesuai rekomendasi dokter hewan.</li>
-                <li>✨ Sediakan mangkuk makan dari keramik/stainless untuk mencegah feline acne.</li>
-                <li>✨ Jaga kebersihan lingkungan: cuci alas tidur, vakum karpet.</li>
-                <li>✨ Beri makanan bergizi tinggi omega-3 untuk kesehatan kulit.</li>
-                <li>✨ Jika kucing terlalu sering menggaruk, gunakan e-collar untuk mencegah luka.</li>
-                <li>✨ Segera konsultasi ke dokter jika gejala memburuk atau muncul lesi luas.</li>
-            </ul>
-            <div class="info-badge" style="margin-top: 1rem;">🐾 Selalu konsultasikan dengan dokter hewan untuk diagnosis dan pengobatan pasti.</div>
+        <div class="page-content">
+            <div class="card">
+                <h2>Tips Perawatan Kulit Kucing Sehat</h2>
+                <ul style="margin-left: 1.5rem; line-height: 1.8; color: #166534;">
+                    <li>Periksa kulit & bulu secara rutin (setiap 1-2 minggu).</li>
+                    <li>Gunakan produk anti-kutu & caplak sesuai rekomendasi dokter hewan.</li>
+                    <li>Sediakan mangkuk makan dari keramik/stainless untuk mencegah feline acne.</li>
+                    <li>Jaga kebersihan lingkungan: cuci alas tidur, vakum karpet.</li>
+                    <li>Beri makanan bergizi tinggi omega-3 untuk kesehatan kulit.</li>
+                    <li>Jika kucing terlalu sering menggaruk, gunakan e-collar untuk mencegah luka.</li>
+                    <li>Segera konsultasi ke dokter jika gejala memburuk atau muncul lesi luas.</li>
+                </ul>
+                <div class="info-badge" style="margin-top: 1.2rem; background: #dcfce7; color: #15803d; border-color: #bbf7d0;">Selalu konsultasikan dengan dokter hewan untuk diagnosis dan pengobatan pasti.</div>
+            </div>
         </div>
     </div>
 
     <div id="tentang-page" class="page">
-        <div class="card">
-            <h2>ℹ️ Tentang SkinCat</h2>
-            <p>SkinCat adalah platform pendeteksi dini penyakit kulit kucing berbasis pemilihan <strong>ciri-ciri/gejala</strong>. Dibangun untuk membantu pemilik kucing mengenali kemungkinan Flea Allergic Dermatitis, Ringworm, Scabies, dan Feline Acne.</p>
-            <p style="margin-top: 0.7rem;"><strong>⚠️ Disclaimer:</strong> Hasil deteksi bersifat prediktif & edukatif, bukan pengganti diagnosis medis profesional. Selalu bawa kucing ke dokter hewan untuk penanganan akurat.</p>
+        <div class="page-content">
+            <div class="card shadow-subtle">
+                <h2 class="academic-title">Tujuan Pembuatan Website</h2>
+                <p class="academic-desc">Website <strong>SkinCat</strong> dikembangkan sebagai sebuah purwarupa instrumen diagnosis digital praktis. Platform ini bertujuan untuk memfasilitasi para pemilik hewan peliharaan dalam melakukan <strong>deteksi awal secara mandiri</strong> terhadap variasi indikasi klinis penyakit kulit luar yang sering dialami oleh kucing peliharaan melalui pencocokan ciri fisik.</p>
+                
+                <hr class="divider">
+                
+                <div class="academic-meta">
+                    <div class="meta-item">
+                        <div>
+                            <strong>Keperluan Academic:</strong>
+                            <p>Proyek Aplikasi Sistem Pakar (Expert System)</p>
+                        </div>
+                    </div>
+                    <div class="meta-item text-right-desktop">
+                        <div>
+                            <strong>Tahun Pembuatan:</strong>
+                            <p>Semester Genap — Tahun 2026</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="note-box">
+                <p><em>Catatan: Pengembangan antarmuka visual dinamis ini memanfaatkan Tailwind CSS Framework bersama manipulasi DOM lokal JavaScript untuk menyimulasikan penalaran rule pakar.</em></p>
+            </div>
+
+            <div class="card" style="margin-top: 2rem;">
+                <h2>Disclaimer</h2>
+                <p style="color: #555;">Hasil deteksi bersifat prediktif & edukatif, bukan pengganti diagnosis medis profesional. Selalu bawa kucing ke dokter hewan untuk penanganan akurat.</p>
+            </div>
         </div>
     </div>
 </main>
@@ -652,230 +196,21 @@
 <footer class="skincat-footer">
     <div class="skincat-footer-container">
         <div class="skincat-footer-brand">
-            <div class="skincat-footer-logo">
-                🐱 SkinCat
-            </div>
-            <p>SkinCat Early Check Indicator &copy; 2026</p>
+            <div class="skincat-footer-logo">🐱 SkinCat</div>
+            <p>@SkinCat2026</p>
         </div>
         <div class="skincat-footer-links-group">
             <div class="skincat-footer-column">
-                <h4>LAYANAN</h4>
                 <ul>
                     <li><a onclick="showPage('home')">Beranda Utama</a></li>
-                    <li><a onclick="showPage('deteksi')">Konsultasi Mandiri</a></li>
-                </ul>
-            </div>
-            <div class="skincat-footer-column">
-                <h4>INFORMASI PENYAKIT</h4>
-                <ul>
-                    <li><a onclick="showPage('info')">Dermatofitosis (Jamur)</a></li>
-                    <li><a onclick="showPage('info')">Scabies Notoedres</a></li>
-                    <li><a onclick="showPage('info')">Flea Allergy Dermatitis</a></li>
+                    <li><a onclick="showPage('info')">Tentang Penyakit</a></li>
+                    <li><a onclick="showPage('tentang')">Tentang</a></li>
                 </ul>
             </div>
         </div>
     </div>
-    <div class="skincat-footer-bottom">
-        whiskerDocs' content style used. Hak Cipta Dilindungi &copy; 2026 Whiskers Worldwide, LLC & SkinCat Project.
-    </div>
 </footer>
 
-<script>
-    const gejalaMaster = [
-        { id: 0, label: "🐾 Gatal intens pada kulit" },
-        { id: 1, label: "🔴 Kemerahan pada kulit" },
-        { id: 2, label: "🍂 Rambut rontok di area pangkal ekor / punggung belakang" },
-        { id: 3, label: "🪳 Adanya kutu atau kotoran kutu (butiran hitam)" },
-        { id: 4, label: "🌀 Lesi melingkar pada kulit" },
-        { id: 5, label: "⭕ Rambut rontok berbentuk lingkaran (cincin)" },
-        { id: 6, label: "🧱 Keropeng tebal di telinga, wajah, atau siku" },
-        { id: 7, label: "✋ Penebalan kulit (teraba kasar)" },
-        { id: 8, label: "⚫ Komedo (bintik hitam) di area dagu" },
-        { id: 9, label: "🤕 Pembengkakan / benjolan di dagu" },
-        { id: 10, label: "💢 Pustula atau jerawat di dagu" },
-        { id: 11, label: "❄️ Kulit bersisik / berketombe" },
-        { id: 12, label: "🩸 Luka akibat garukan berlebihan" },
-        { id: 13, label: "🔥 Gatal parah ekstrem (kucing gelisah garuk terus)" },
-        { id: 14, label: "👂 Rambut rontok di area telinga" },
-        { id: 15, label: "😿 Lesi / kemerahan di sekitar bibir atau dagu (non komedo)" }
-    ];
-
-    const diseasesData = [
-        { 
-            name: "Flea Allergic Dermatitis", 
-            icon: "🐜",
-            shortDesc: "Alergi kutu → gatal, kemerahan, rontok pangkal ekor, ditemukan kutu.",
-            gejalaIndices: [0, 1, 2, 3, 11, 12],
-            saran: "➤ Lakukan kontrol kutu (spot-on/frontline). Konsultasi ke dokter untuk antiinflamasi. Bersihkan lingkungan."
-        },
-        { 
-            name: "Ringworm (Kurap)", 
-            icon: "🍄",
-            shortDesc: "Infeksi jamur → lesi melingkar, rambut rontok cincin, bersisik.",
-            gejalaIndices: [4, 5, 11],
-            saran: "➤ Isolasi kucing, gunakan antijamur topikal (miconazole) & oral sesuai resep dokter. Sterilkan lingkungan."
-        },
-        { 
-            name: "Scabies (Kudis)", 
-            icon: "🕷️",
-            shortDesc: "Tungau → gatal ekstrem, keropeng tebal telinga/wajah, penebalan kulit.",
-            gejalaIndices: [0, 6, 7, 13, 14, 12],
-            saran: "➤ Segera konsultasi dokter untuk obat antiparasit (ivermectin/selamektin). Mandi obat, semua hewan kontak diobati."
-        },
-        { 
-            name: "Feline Acne", 
-            icon: "⚫",
-            shortDesc: "Komedo dagu, bengkak, pustula, kemerahan.",
-            gejalaIndices: [8, 9, 10, 15, 1],
-            saran: "➤ Bersihkan dagu dengan sabun antiseptik (chlorhexidine). Ganti mangkuk plastik dengan stainless steel/keramik. Hindari stres."
-        }
-    ];
-
-    const gejalaContainer = document.getElementById('gejala-container');
-    function renderCheckboxes() {
-        if (!gejalaContainer) return;
-        gejalaContainer.innerHTML = '';
-        gejalaMaster.forEach(gejala => {
-            const div = document.createElement('div');
-            div.className = 'gejala-item';
-            const cb = document.createElement('input');
-            cb.type = 'checkbox';
-            cb.id = `gejala_${gejala.id}`;
-            cb.setAttribute('value', gejala.id);
-            const label = document.createElement('label');
-            label.htmlFor = `gejala_${gejala.id}`;
-            label.innerText = gejala.label;
-            div.appendChild(cb);
-            div.appendChild(label);
-            gejalaContainer.appendChild(div);
-        });
-    }
-
-    function getSelectedGejala() {
-        const checkboxes = document.querySelectorAll('#gejala-container input[type="checkbox"]');
-        const selected = [];
-        checkboxes.forEach(cb => {
-            if (cb.checked) selected.push(parseInt(cb.value));
-        });
-        return selected;
-    }
-
-    function resetGejala() {
-        const checkboxes = document.querySelectorAll('#gejala-container input[type="checkbox"]');
-        checkboxes.forEach(cb => cb.checked = false);
-        const hasilDiv = document.getElementById('hasil-deteksi');
-        if (hasilDiv) hasilDiv.style.display = 'none';
-    }
-
-    function detectDisease(selectedIndices) {
-        if (!selectedIndices.length) {
-            return { error: true, message: "⚠️ Belum ada gejala yang dipilih. Silakan centang minimal satu ciri-ciri pada kucing Anda." };
-        }
-        const results = diseasesData.map(disease => {
-            let matchCount = 0;
-            for (let idx of selectedIndices) {
-                if (disease.gejalaIndices.includes(idx)) matchCount++;
-            }
-            let percent = (matchCount / selectedIndices.length) * 100;
-            percent = Math.min(100, Math.round(percent));
-            return { ...disease, matchCount, percent };
-        });
-        results.sort((a,b) => b.percent - a.percent);
-        const top = results[0];
-        const secondary = results[1] && results[1].percent > 20 && (top.percent - results[1].percent) < 35 ? results[1] : null;
-        return { top, secondary, totalGejala: selectedIndices.length };
-    }
-
-    function displayResult(selectedIndices) {
-        const resultDiv = document.getElementById('hasil-deteksi');
-        if (!resultDiv) return;
-        const detection = detectDisease(selectedIndices);
-        if (detection.error) {
-            resultDiv.style.display = 'block';
-            resultDiv.innerHTML = `<div style="color:#7c3aed;">${detection.message}</div>`;
-            return;
-        }
-        const topDisease = detection.top;
-        let html = `
-            <div style="font-weight:800; font-size:1.4rem; margin-bottom:12px;">📊 Hasil Analisis Gejala</div>
-            <div style="background:#f9f6ff; border-radius:28px; padding:1rem;">
-                <strong>🎯 Kemungkinan utama:</strong> ${topDisease.icon} ${topDisease.name} (${topDisease.percent}% kecocokan dari gejala yang dipilih)<br>
-                <strong>Deskripsi:</strong> ${topDisease.shortDesc}<br>
-                <strong>💡 Saran awal:</strong> ${topDisease.saran}
-            </div>
-        `;
-        if (detection.secondary) {
-            html += `<div style="margin-top: 12px; background:#f3efff; border-radius: 24px; padding:0.7rem;">🔍 Kemungkinan lain: ${detection.secondary.icon} ${detection.secondary.name} (${detection.secondary.percent}% kecocokan)</div>`;
-        }
-        html += `<div style="margin-top: 16px; font-size:0.8rem; color:#6d28d9;">✅ Hasil berdasarkan ${detection.totalGejala} gejala yang dipilih. Konsultasikan ke dokter hewan untuk diagnosis lebih lanjut.</div>`;
-        resultDiv.style.display = 'block';
-        resultDiv.innerHTML = html;
-    }
-
-    const pages = {
-        'home': 'home-page',
-        'deteksi': 'deteksi-page',
-        'info': 'info-page',
-        'tips': 'tips-page',
-        'tentang': 'tentang-page'
-    };
-
-    function showPage(pageKey) {
-        const targetId = pages[pageKey];
-        if (!targetId) return;
-
-        Object.values(pages).forEach(pid => {
-            const el = document.getElementById(pid);
-            if (el) el.classList.remove('active-page');
-        });
-        
-        const target = document.getElementById(targetId);
-        if (target) target.classList.add('active-page');
-        
-        window.scrollTo({top: 0, behavior: 'smooth'});
-
-        document.querySelectorAll('.nav-btn').forEach(btn => {
-            if (btn.getAttribute('data-nav') === pageKey) {
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
-            }
-        });
-    }
-
-    function init() {
-        renderCheckboxes();
-        
-        const deteksiBtn = document.getElementById('deteksi-btn');
-        if (deteksiBtn) {
-            deteksiBtn.addEventListener('click', () => {
-                const selected = getSelectedGejala();
-                if (selected.length === 0) {
-                    alert("Pilih minimal satu gejala / ciri-ciri pada kulit kucing.");
-                    return;
-                }
-                displayResult(selected);
-            });
-        }
-        
-        const resetBtn = document.getElementById('reset-gejala-btn');
-        if (resetBtn) resetBtn.addEventListener('click', resetGejala);
-        
-        const homeDeteksi = document.getElementById('home-deteksi-btn');
-        if (homeDeteksi) homeDeteksi.addEventListener('click', () => showPage('deteksi'));
-        
-        document.querySelectorAll('.nav-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const navKey = btn.getAttribute('data-nav');
-                if (navKey) showPage(navKey);
-            });
-        });
-        
-        showPage('home');
-    }
-
-    window.addEventListener('DOMContentLoaded', init);
-</script>
-
+<script src="script.js"></script>
 </body>
 </html>
